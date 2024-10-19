@@ -6,7 +6,7 @@ import axios from "axios";
 const FileList = () => {
   const [files, setFiles] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortConfig, setSortConfig] = useState({ key: "createdAt", direction: "desc" });
+  const [sortConfig, setSortConfig] = useState({ key: "lastModified", direction: "desc" });
 
   useEffect(() => {
     const fetchFiles = async () => {
@@ -95,9 +95,9 @@ const FileList = () => {
             </th>
             <th
               className="py-2 px-4 text-left cursor-pointer"
-              onClick={() => handleSort("createdAt")}
+              onClick={() => handleSort("lastModified")}
             >
-              Uploaded Date {sortConfig.key === "LastModified" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
+              Uploaded Date {sortConfig.key === "lastModified" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
             </th>
             <th className="py-2 px-4 text-left">Actions</th>
           </tr>
@@ -121,7 +121,7 @@ const FileList = () => {
                 </td>
                 <td className="py-2 px-4 border-b border-gray-300">
                   <span className="text-green-500">
-                    {new Date(file.LastModified).toLocaleDateString()}
+                    {new Date(file.lastModified).toLocaleDateString()}
                   </span>
                 </td>
                 <td className="py-2 px-4 border-b border-gray-300">

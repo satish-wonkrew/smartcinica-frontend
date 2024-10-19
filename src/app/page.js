@@ -9,8 +9,7 @@ import { useAuth } from "./context/AuthContext";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
-  return (
-    const { login, user } = useAuth(); // Ensure you get currentUser from context
+  const { login, user } = useAuth(); // Ensure you get currentUser from context
   const router = useRouter(); // Initialize the router
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -100,5 +99,3 @@ export default function Home() {
     </div>
   );
 };
-  );
-}

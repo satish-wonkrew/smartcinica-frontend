@@ -3,9 +3,10 @@ import { createContext, useContext, useState } from "react";
 import axios from "axios";
 
 const AuthContext = createContext();
-
+import { Router } from "next/navigation";
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const router = useRouter();
 
   // Login function
   const login = async (username, password) => {
@@ -42,11 +43,13 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Logout function
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("token");
-  };
+ const logout = () => {
+  setUser(null);
+  localStorage.removeItem("token");
+  
+  // Redirect to the home page
+  router.push("/");
+};
 
   return (
     <AuthContext.Provider value={{ user, login, register, logout }}>

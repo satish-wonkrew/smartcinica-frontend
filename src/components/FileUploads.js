@@ -158,7 +158,7 @@ const FileUploadModal = () => {
                       style={{ width: `${uploadProgress}%` }}
                     ></div>
                   </div>
-                  <p className="text-sm text-gray-600">{uploadProgress}%</p>
+                  <p className="text-sm text-gray-600">{uploadProgress.toFixed(2)}%</p>
                 </div>
               )}
                   Uploading: {uploadProgress.toFixed(0)}%

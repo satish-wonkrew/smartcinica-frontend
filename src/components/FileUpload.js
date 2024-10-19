@@ -108,7 +108,7 @@ const FileUploadModal = () => {
               </div>
 
               {file && (
-                <div className="mb-4 text-white">
+                <div className="mb-4 dark:text-white">
                   <p className="font-semibold">Selected File:</p>
                   <p>{file.name}</p>
                   <p>{formatFileSize(file.size)}</p>

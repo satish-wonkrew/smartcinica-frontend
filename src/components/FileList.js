@@ -134,12 +134,7 @@ const FileList = () => {
                     >
                       Download
                     </a>
-                    <button
-                      onClick={() => handleDelete(file._id)}
-                      className="px-3 py-1 text-white bg-red-500 hover:bg-red-600 rounded transition duration-300 transform hover:scale-105"
-                    >
-                      Delete
-                    </button>
+                   
                   </div>
                 </td>
               </tr>

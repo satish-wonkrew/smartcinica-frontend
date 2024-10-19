@@ -6,6 +6,7 @@ import axios from "axios";
 const FileList = () => {
   const [files, setFiles] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [sortConfig, setSortConfig] = useState({ key: "createdAt", direction: "desc" });
 
   useEffect(() => {
     const fetchFiles = async () => {
@@ -42,8 +43,26 @@ const FileList = () => {
     }
   };
 
-  // Filter files based on search term
-  const filteredFiles = files.filter((file) =>
+  const handleSort = (key) => {
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const sortedFiles = [...files].sort((a, b) => {
+    if (a[sortConfig.key] < b[sortConfig.key]) {
+      return sortConfig.direction === "asc" ? -1 : 1;
+    }
+    if (a[sortConfig.key] > b[sortConfig.key]) {
+      return sortConfig.direction === "asc" ? 1 : -1;
+    }
+    return 0;
+  });
+
+  // Filter and sort files based on search term and sort configuration
+  const filteredFiles = sortedFiles.filter((file) =>
     file.filename.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -57,14 +76,29 @@ const FileList = () => {
         placeholder="Search files..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-full p-2 mb-4 border rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+        className="w-full p-2 text-black mb-4 border rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
       />
       <table className="min-w-full bg-white border border-gray-300 rounded-lg overflow-hidden shadow-md">
         <thead className="bg-gradient-to-r from-blue-400 to-purple-400 text-white">
           <tr>
-            <th className="py-2 px-4 text-left">File Name</th>
-            <th className="py-2 px-4 text-left">Size (KB)</th>
-            <th className="py-2 px-4 text-left">Status</th>
+            <th
+              className="py-2 px-4 text-left cursor-pointer"
+              onClick={() => handleSort("filename")}
+            >
+              File Name {sortConfig.key === "filename" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
+            </th>
+            <th
+              className="py-2 px-4 text-left cursor-pointer"
+              onClick={() => handleSort("size")}
+            >
+              Size (KB) {sortConfig.key === "size" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
+            </th>
+            <th
+              className="py-2 px-4 text-left cursor-pointer"
+              onClick={() => handleSort("createdAt")}
+            >
+              Uploaded Date {sortConfig.key === "createdAt" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
+            </th>
             <th className="py-2 px-4 text-left">Actions</th>
           </tr>
         </thead>
@@ -79,7 +113,6 @@ const FileList = () => {
                   {file.filename}
                 </td>
                 <td className="py-2 px-4 border-b border-gray-300 text-black">
-                  {/* Culculete Size Gb or Mb or kb */}
                   {file.size / 1024 / 1024 > 1024
                     ? `${(file.size / 1024 / 1024 / 1024).toFixed(2)} GB`
                     : file.size / 1024 > 1024
@@ -87,7 +120,9 @@ const FileList = () => {
                     : `${file.size / 1024} KB`}
                 </td>
                 <td className="py-2 px-4 border-b border-gray-300">
-                  <span className="text-green-500">Uploaded</span>
+                  <span className="text-green-500">
+                    {new Date(file.createdAt).toLocaleDateString()}
+                  </span>
                 </td>
                 <td className="py-2 px-4 border-b border-gray-300">
                   <div className="flex space-x-2">
@@ -99,6 +134,12 @@ const FileList = () => {
                     >
                       Download
                     </a>
+                    <button
+                      onClick={() => handleDelete(file._id)}
+                      className="px-3 py-1 text-white bg-red-500 hover:bg-red-600 rounded transition duration-300 transform hover:scale-105"
+                    >
+                      Delete
+                    </button>
                   </div>
                 </td>
               </tr>

@@ -3,7 +3,7 @@ import { createContext, useContext, useState } from "react";
 import axios from "axios";
 
 const AuthContext = createContext();
-import { Router } from "next/navigation";
+import  router  from "next/navigation";
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const router = useRouter();

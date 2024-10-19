@@ -97,7 +97,7 @@ const FileList = () => {
               className="py-2 px-4 text-left cursor-pointer"
               onClick={() => handleSort("createdAt")}
             >
-              Uploaded Date {sortConfig.key === "createdAt" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
+              Uploaded Date {sortConfig.key === "LastModified" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
             </th>
             <th className="py-2 px-4 text-left">Actions</th>
           </tr>
@@ -121,7 +121,7 @@ const FileList = () => {
                 </td>
                 <td className="py-2 px-4 border-b border-gray-300">
                   <span className="text-green-500">
-                    {new Date(file.createdAt).toLocaleDateString()}
+                    {new Date(file.LastModified).toLocaleDateString()}
                   </span>
                 </td>
                 <td className="py-2 px-4 border-b border-gray-300">

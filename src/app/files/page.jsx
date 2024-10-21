@@ -1,6 +1,6 @@
 import FileList from "@/components/FileList";
-import FileUpload from "@/components/FileUpload";
 import FileUploadModal from "@/components/FileUploads";
+import FileUpload from "@/components/upload";
 import React from "react";
 
 const Files = () => {
@@ -15,6 +15,7 @@ const Files = () => {
           Upload New File
         </h2>
         <FileUploadModal />
+        <FileUpload />
       </div>
 
       <div className="bg-gray-800 rounded-lg shadow-lg p-6 transition duration-300 hover:shadow-2xl animate__animated animate__fadeIn animate__delay-2s">

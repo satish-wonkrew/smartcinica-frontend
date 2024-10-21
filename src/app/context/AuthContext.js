@@ -1,9 +1,10 @@
 "use client";
 import { createContext, useContext, useState } from "react";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const AuthContext = createContext();
-import  useRouter  from "next/navigation";
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const router = useRouter();
@@ -43,13 +44,13 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
- const logout = () => {
-  setUser(null);
-  localStorage.removeItem("token");
-  
-  // Redirect to the home page
-  router.push("/");
-};
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem("token");
+
+    // Redirect to the home page
+    router.push("/");
+  };
 
   return (
     <AuthContext.Provider value={{ user, login, register, logout }}>

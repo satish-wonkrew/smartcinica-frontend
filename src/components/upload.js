@@ -14,7 +14,7 @@ function FileUpload() {
   const startUpload = async (file) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/upload/start-upload",
+        `${process.env.NEXT_PUBLIC_API_URL}/upload/start-upload`,
         {
           fileName: file.name,
           fileType: file.type,
@@ -40,7 +40,7 @@ function FileUpload() {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/upload/get-upload-url",
+        `${process.env.NEXT_PUBLIC_API_URL}/upload/get-upload-url`,
         {
           uploadId,
           fileName: file.name,
@@ -80,7 +80,7 @@ function FileUpload() {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/upload/complete-upload",
+        `${process.env.NEXT_PUBLIC_API_URL}/upload/complete-upload`,
         {
           fileName: file.name,
           uploadId,

@@ -6,7 +6,10 @@ import axios from "axios";
 const FileList = () => {
   const [files, setFiles] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortConfig, setSortConfig] = useState({ key: "lastModified", direction: "desc" });
+  const [sortConfig, setSortConfig] = useState({
+    key: "lastModified",
+    direction: "desc",
+  });
 
   useEffect(() => {
     const fetchFiles = async () => {
@@ -28,6 +31,10 @@ const FileList = () => {
 
     fetchFiles();
   }, []);
+
+  console.log("====================================");
+  console.log(files);
+  console.log("====================================");
 
   const handleDelete = async (id) => {
     const token = localStorage.getItem("token");
@@ -85,19 +92,34 @@ const FileList = () => {
               className="py-2 px-4 text-left cursor-pointer"
               onClick={() => handleSort("filename")}
             >
-              File Name {sortConfig.key === "filename" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
+              File Name{" "}
+              {sortConfig.key === "filename"
+                ? sortConfig.direction === "asc"
+                  ? "↑"
+                  : "↓"
+                : ""}
             </th>
             <th
               className="py-2 px-4 text-left cursor-pointer"
               onClick={() => handleSort("size")}
             >
-              Size (KB) {sortConfig.key === "size" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
+              Size (KB){" "}
+              {sortConfig.key === "size"
+                ? sortConfig.direction === "asc"
+                  ? "↑"
+                  : "↓"
+                : ""}
             </th>
             <th
               className="py-2 px-4 text-left cursor-pointer"
               onClick={() => handleSort("lastModified")}
             >
-              Uploaded Date {sortConfig.key === "lastModified" ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
+              Uploaded Date{" "}
+              {sortConfig.key === "lastModified"
+                ? sortConfig.direction === "asc"
+                  ? "↑"
+                  : "↓"
+                : ""}
             </th>
             <th className="py-2 px-4 text-left">Actions</th>
           </tr>
@@ -127,14 +149,14 @@ const FileList = () => {
                 <td className="py-2 px-4 border-b border-gray-300">
                   <div className="flex space-x-2">
                     <a
-                      href={file.url}
+                      href={file.downloadUrl} // Replace 'file.url' with the actual URL to download the file
                       className="px-3 py-1 cursor-pointer text-white bg-blue-500 hover:bg-blue-600 rounded transition duration-300 transform hover:scale-105"
                       target="_blank"
                       rel="noopener noreferrer"
+                      download // This attribute will force download of the file instead of opening it
                     >
                       Download
                     </a>
-                   
                   </div>
                 </td>
               </tr>

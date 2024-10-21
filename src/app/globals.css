@@ -25,3 +25,20 @@ body {
     text-wrap: balance;
   }
 }
+
+
+/* Custom CSS for card hover effects */
+.bg-gray-200:hover {
+  background-color: #f8f8f8; /* Slightly lighter gray on hover */
+}
+
+/* Custom CSS for transition */
+.transition-all {
+  transition: all 0.3s ease;
+}
+
+/* Ensure you have animate.css imported in your project */
+/* Add some transition for dropdown */
+.dropdown-transition {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}

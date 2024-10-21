@@ -7,6 +7,7 @@ import Hero from "@/components/herosection";
 import React, { useEffect, useState } from "react";
 import { useAuth } from "./context/AuthContext";
 import { useRouter } from "next/navigation";
+import img from "../img/cnica.png";
 
 export default function Home() {
   const { login, user } = useAuth(); // Ensure you get currentUser from context
@@ -35,14 +36,17 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-200 to-purple-500">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 max-w-md w-full">
-        <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-gray-100">
-          Welcome Back
+    <div className="min-h-screen flex items-center justify-center bg-gray-200">
+      <div className="bg-white dark:bg-white rounded-lg shadow-xl p-8 max-w-md w-full">
+        {/* add logo */}
+        <Image
+          src={img}
+          alt="SmartCinica logo"
+          className="h-30 w-26 object-contain mb-4 mx-auto"
+        />
+        <h2 className="text-center text-xl font-semibold text-gray-800 dark:text-white mb-2">
+          Welcome to SmartCinica
         </h2>
-        <p className="text-center text-gray-500 dark:text-gray-400 mb-8">
-          Please login to your account
-        </p>
 
         {error && (
           <p className="text-sm text-red-600 dark:text-red-400 text-center">

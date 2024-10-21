@@ -2,6 +2,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { AuthProvider } from "./context/AuthContext";
 import Navbar from "@/components/Navbar";
+import { Toaster } from "sonner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -27,6 +28,7 @@ export default function RootLayout({ children }) {
       >
         <AuthProvider>
           <Navbar />
+          <Toaster richColors   />
           {children}
         </AuthProvider>
       </body>

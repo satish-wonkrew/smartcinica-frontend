@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 
@@ -9,18 +9,32 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const router = useRouter();
 
+  // Check for a token on mount to set user state
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      // Optionally, fetch user data using the token to set the user state
+      const fetchUser = async () => {
+        try {
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/user`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setUser(response.data);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      };
+      fetchUser();
+    }
+  }, []);
+
   // Login function
   const login = async (username, password) => {
-    console.log("====================================");
-    console.log(username);
-    console.log("====================================");
     try {
-      console.log("Attempting login with:", username, password);
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
         { username, password }
       );
-      console.log("Response:", response.data);
       setUser(response.data);
       localStorage.setItem("token", response.data.token);
     } catch (error) {
@@ -37,19 +51,18 @@ export const AuthProvider = ({ children }) => {
         { username, email, password }
       );
       setUser(response.data);
-      localStorage.setItem("token", response.data.token); // Storing token after signup if applicable
+      localStorage.setItem("token", response.data.token); // Store token after signup if applicable
     } catch (error) {
       console.error("Registration error:", error);
       throw new Error("Registration failed");
     }
   };
 
+  // Logout function
   const logout = () => {
     setUser(null);
     localStorage.removeItem("token");
-
-    // Redirect to the home page
-    router.push("/");
+    router.push("/"); // Redirect to the home page
   };
 
   return (

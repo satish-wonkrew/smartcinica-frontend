@@ -1,18 +1,17 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
+import { toast } from "sonner";
 
 const CHUNK_SIZE = 20 * 1024 * 1024; // 20MB part size for S3
 
 function FileUpload() {
   const [uploadId, setUploadId] = useState(null);
   const [file, setFile] = useState(null);
-  const [parts, setParts] = useState([]); // Track uploaded parts
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0); // Track upload progress
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState("");
-  const [fileVerification, setFileVerification] = useState(false); // State for file verification
   const [fileSize, setFileSize] = useState(""); // Display file size
   const [fileName, setFileName] = useState(""); // Display file name
 
@@ -22,9 +21,7 @@ function FileUpload() {
     if (size < 1024 * 1024) return `${(size / 1024).toFixed(2)} KB`;
     if (size < 1024 * 1024 * 1024)
       return `${(size / (1024 * 1024)).toFixed(2)} MB`;
-    if (size < 1024 * 1024 * 1024 * 1024)
-      return `${(size / (1024 * 1024 * 1024)).toFixed(2)} GB`;
-    return `${(size / (1024 * 1024 * 1024 * 1024)).toFixed(2)} TB`;
+    return `${(size / (1024 * 1024 * 1024)).toFixed(2)} GB`;
   };
 
   // Start Multipart Upload
@@ -43,6 +40,7 @@ function FileUpload() {
     } catch (error) {
       console.error("Error starting upload:", error);
       setError("Error starting multipart upload. Please check the server.");
+      throw error; // Rethrow the error for proper handling
     }
   };
 
@@ -82,9 +80,14 @@ function FileUpload() {
   };
 
   // Complete Multipart Upload
-  const completeUpload = async () => {
-    if (!uploadId || !file || parts.length === 0) {
+  const completeUpload = async (fileParts) => {
+    if (!uploadId || !file || fileParts.length === 0) {
       setError("Missing required parameters for completing upload");
+      console.error("Missing required parameters:", {
+        uploadId,
+        file,
+        fileParts,
+      });
       return;
     }
 
@@ -94,12 +97,12 @@ function FileUpload() {
         {
           fileName: file.name,
           uploadId,
-          parts,
+          parts: fileParts,
         }
       );
 
       if (response.status === 200) {
-        alert("Upload complete!");
+        toast.success("Upload complete!");
         setIsModalOpen(false); // Close the modal after upload completion
         window.location.reload(); // Refresh the page
       } else {
@@ -118,11 +121,9 @@ function FileUpload() {
       return;
     }
     setFile(selectedFile);
-    setParts([]); // Reset parts
     setError(""); // Clear previous errors
     setFileSize(formatFileSize(selectedFile.size)); // Set file size
     setFileName(selectedFile.name); // Set file name
-    setFileVerification(false); // Reset verification status
   };
 
   // Upload File Parts
@@ -132,7 +133,6 @@ function FileUpload() {
       return;
     }
 
-    const controller = new AbortController();
     setUploading(true);
     const fileParts = []; // Use local variable to track parts
 
@@ -149,7 +149,6 @@ function FileUpload() {
         const uploadedPart = await uploadPart(partNumber, chunk);
         if (uploadedPart) {
           fileParts.push(uploadedPart); // Track uploaded parts locally
-          setParts(fileParts); // Update the state with all uploaded parts
         }
 
         // Update the upload progress
@@ -157,22 +156,12 @@ function FileUpload() {
       }
 
       // Complete the upload only after all parts have been uploaded
-      await completeUpload();
+      await completeUpload(fileParts);
     } catch (error) {
       setError("File upload failed. Please try again.");
     } finally {
       setUploading(false);
       setUploadProgress(0); // Reset progress after upload
-    }
-  };
-
-  // Handle File Verification
-  const handleFileVerification = () => {
-    if (file) {
-      setFileVerification(true);
-      alert(`File Verified:\nName: ${fileName}\nSize: ${fileSize}`);
-    } else {
-      setError("No file selected for verification.");
     }
   };
 
@@ -214,10 +203,11 @@ function FileUpload() {
                     />
                   </svg>
                   <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                    <span className="font-semibold">Click to upload</span> or drag and drop
+                    <span className="font-semibold">Click to upload</span> or
+                    drag and drop
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                    PNG, JPG, GIF or MP4 (MAX 5GB)
+                    Upload .zip format files only
                   </p>
                 </div>
                 <input
@@ -237,32 +227,28 @@ function FileUpload() {
               </div>
             )}
 
-            <div className="flex space-x-4">
+            {error && <p className="text-red-500 mb-2">{error}</p>}
+
+            <div className="mt-4 flex justify-end">
               <button
-                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                onClick={handleFileVerification}
-                disabled={!file}
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 mr-2"
+                onClick={() => setIsModalOpen(false)}
               >
-                Verify File
+                Cancel
               </button>
+
               <button
-                className={`px-4 py-2 ${uploading ? 'bg-gray-400' : 'bg-blue-500'} text-white rounded hover:bg-blue-600`}
+                className={`px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 ${
+                  uploading ? "opacity-50 cursor-not-allowed" : ""
+                }`}
                 onClick={uploadFileParts}
                 disabled={!file || uploading}
               >
-                {uploading ? 'Uploading...' : 'Upload'}
+                {uploading
+                  ? `Uploading ${uploadProgress.toFixed(2)}%...`
+                  : "Start Upload"}
               </button>
             </div>
-
-            {/* {error && <p className="mt-4 text-red-600">{error}</p>} */}
-            {uploadProgress > 0 && <p className="mt-4">Upload Progress: {uploadProgress.toFixed(2)}%</p>}
-
-            <button
-              className="mt-4 px-4 py-2 text-gray-500 underline"
-              onClick={() => setIsModalOpen(false)}
-            >
-              Close
-            </button>
           </div>
         </div>
       )}
